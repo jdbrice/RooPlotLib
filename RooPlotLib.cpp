@@ -168,7 +168,7 @@ void jdb::RooPlotLib::style_axes( string opt, vector<string> params ){
 		axis->SetNoExponent( ip0 );
 		cout << "NO EXPONENT" << endl;
 	}
-	cout << "STYLE AXIS : " << axis_opt << endl;
+	// cout << "STYLE AXIS : " << axis_opt << endl;
 
 
 }

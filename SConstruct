@@ -10,7 +10,6 @@ ROOTLIBS      	= subprocess.check_output( ["root-config",  "--libs"] ).decode( "
 ROOTGLIBS     	= subprocess.check_output( ["root-config",  "--glibs"] ).decode( "utf-8" );
 ROOTLIBPATH 	= subprocess.check_output( ["root-config", "--libdir" ] ).decode( "utf-8" );
 ROOT_SYS 		= os.environ[ "ROOTSYS" ]
-JDB_LIB			= os.environ[ "JDB_LIB" ]
 
 
 cppDefines 		= {}
