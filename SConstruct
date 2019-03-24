@@ -34,7 +34,19 @@ common_env.Append(CPPPATH		= paths)
 
 
 common_env.Append(CXXFLAGS 		= "-DJDB_LOG_LEVEL=${LL}" )
-# common_env.Append(CXXFLAGS 		= "-DROOT6=${ROOT6}" )
+ROOT6 = ARGUMENTS.get( "ROOT6", 1 )
+if int(ROOT6) > 0 :
+    common_env.Append(CXXFLAGS 		= "-DROOT6=1" )
 
 
 target = common_env.StaticLibrary( target = 'RooPlotLib', source = [Glob( "*.cpp" )] )
+
+# Install the Header files and lib file:
+install = [
+    common_env.Install( '/usr/local/include/RooPlotLib/', [Glob("*.h")] ),
+    common_env.Install( '/usr/local/lib', [Glob("*.a")] ) 
+]
+
+
+# set as the default target
+Default( target, install )
