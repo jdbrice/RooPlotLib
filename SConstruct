@@ -2,20 +2,27 @@
 import subprocess
 import os
 
+# If we are being called from a higher SConstruct, then import the PREFIX, if not then get from arguments
+try :
+    Import( 'PREFIX' )
+except  :
+    PREFIX = Dir(ARGUMENTS.get( "prefix", "/usr/local" )).abspath
+print( "PREFIX: %s" % (PREFIX) )
+
 LIB_NAME 		= "lib/RooBarb"
 
 ROOTCFLAGS    	= subprocess.check_output( ['root-config',  '--cflags'] ).rstrip().decode("utf-8").split( " " )
 ROOTLDFLAGS    	= subprocess.check_output( ["root-config",  "--ldflags"] ).rstrip().decode("utf-8").split( " " )
-ROOTLIBS      	= subprocess.check_output( ["root-config",  "--libs"] ).decode( "utf-8" );
-ROOTGLIBS     	= subprocess.check_output( ["root-config",  "--glibs"] ).decode( "utf-8" );
-ROOTLIBPATH 	= subprocess.check_output( ["root-config", "--libdir" ] ).decode( "utf-8" );
+ROOTLIBS      	= subprocess.check_output( ["root-config",  "--libs"] ).decode( "utf-8" )
+ROOTGLIBS     	= subprocess.check_output( ["root-config",  "--glibs"] ).decode( "utf-8" )
+ROOTLIBPATH 	= subprocess.check_output( ["root-config", "--libdir" ] ).decode( "utf-8" )
 ROOT_SYS 		= os.environ[ "ROOTSYS" ]
 
 
 cppDefines 		= {}
 cppFlags 		= ['-Wall' ]#, '-Werror']
 cxxFlags 		= ['-std=c++11', '-fPIC', '-O3' ]
-paths 			= [ '.', '/usr/local/include/XmlConfig' ]
+paths 			= [ '.', PREFIX + '/XmlConfig' ]
 
 
 vars = Variables()
@@ -31,6 +38,7 @@ common_env.Append(CXXFLAGS 		= cxxFlags)
 common_env.Append(LINKFLAGS 	= cxxFlags ) 
 common_env.Append(LINKFLAGS		= ROOTLDFLAGS )
 common_env.Append(CPPPATH		= paths)
+common_env.Append(LIBPATH 		= [ PREFIX + "/lib" ] )
 
 
 common_env.Append(CXXFLAGS 		= "-DJDB_LOG_LEVEL=${LL}" )
@@ -43,8 +51,8 @@ target = common_env.StaticLibrary( target = 'RooPlotLib', source = [Glob( "*.cpp
 
 # Install the Header files and lib file:
 install = [
-    common_env.Install( '/usr/local/include/RooPlotLib/', [Glob("*.h")] ),
-    common_env.Install( '/usr/local/lib', [Glob("*.a")] ) 
+    common_env.Install( PREFIX + '/include/RooPlotLib/', [Glob("*.h")] ),
+    common_env.Install( PREFIX + '/lib', [Glob("*.a")] ) 
 ]
 
 
