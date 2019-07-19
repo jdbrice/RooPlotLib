@@ -22,7 +22,7 @@ ROOT_SYS 		= os.environ[ "ROOTSYS" ]
 cppDefines 		= {}
 cppFlags 		= ['-Wall' ]#, '-Werror']
 cxxFlags 		= ['-std=c++11', '-fPIC', '-O3' ]
-paths 			= [ '.', PREFIX + '/XmlConfig' ]
+paths 			= [ '.', PREFIX + '/include/XmlConfig', PREFIX + '/include' ]
 
 
 vars = Variables()
