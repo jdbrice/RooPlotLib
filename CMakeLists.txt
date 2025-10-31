@@ -1,7 +1,21 @@
-cmake_minimum_required(VERSION 3.10)
-project(RooPlotLib)
+# Sources: list explicitly (recommended) or use a glob if you prefer
+file( GLOB XMLCONFIG_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+file( GLOB XMLCONFIG_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/*.h" )
 
-add_library(RooPlotLib SHARED RooPlotLib.cpp)
+
+# OBJECT library (used to compose the combined lib)
+add_library(RooPlotLib_obj OBJECT ${XMLCONFIG_SOURCES} ${XMLCONFIG_HEADERS})
+target_include_directories(RooPlotLib_obj PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ ${CMAKE_SOURCE_DIR}/ )
+target_link_libraries(RooPlotLib_obj PUBLIC XmlConfig)
+
+# Actual library for this component
+if(BUILD_SHARED_LIBS)
+  add_library(RooPlotLib SHARED $<TARGET_OBJECTS:RooPlotLib_obj>)
+else()
+  add_library(RooPlotLib STATIC $<TARGET_OBJECTS:RooPlotLib_obj>)
+endif()
+target_include_directories(RooPlotLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ ${CMAKE_SOURCE_DIR}/)
+target_link_libraries(RooPlotLib PUBLIC XmlConfig)
 
 # Run root-config to get flags
 execute_process(
@@ -21,22 +35,4 @@ separate_arguments(ROOT_LIBS)
 target_compile_options(RooPlotLib PRIVATE ${ROOT_CFLAGS})
 target_link_libraries(RooPlotLib PRIVATE ${ROOT_LIBS})
 
-set_target_properties(RooPlotLib PROPERTIES LINK_FLAGS "-m32")
 
-
-
-# find_library(XMLCONFIG_LIB
-#     NAMES XMLConfig
-#     HINTS ${CMAKE_SOURCE_DIR}/../XmlConfig/build ${CMAKE_SOURCE_DIR}/XmlConfig/build
-#     NO_DEFAULT_PATH
-# )
-# message(STATUS "Found XmlConfig: ${XMLCONFIG_LIB}")
-# target_link_libraries(RooPlotLib PRIVATE ${XMLCONFIG_LIB})
-
-add_compile_options("-m32")
-
-target_include_directories(RooPlotLib PRIVATE
-  ${CMAKE_SOURCE_DIR}/XmlConfig
-  ${CMAKE_SOURCE_DIR}/
-)
-set_property(TARGET RooPlotLib PROPERTY CXX_STANDARD 11)
